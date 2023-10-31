@@ -1,3 +1,5 @@
+import socio.*
+
 class Viajes{
 	const property idioma = #{}
 	
@@ -5,7 +7,10 @@ class Viajes{
 	method implicaEsfuerzo() = true
 	method diasDeActividad()
 	method esInteresante() = idioma.size() >= 2
-	
+	method actividadTranquila() = self.diasDeActividad() >= 4
+	method esRecomendable(socio) {
+		return self.esInteresante() and socio.actividadQueLeAtrae(self) and socio.actividades().all({a=>a != self})
+	}
 }
 
 class ViajeDePlaya inherits Viajes{
@@ -49,9 +54,11 @@ class SalidaDeTrekking inherits Viajes{
 
 class Gimnasia inherits Viajes{
 	override method idioma() {
-		if(idioma.isEmpty()) {idioma.add("Espaniol")}
-		else {idioma.removeAll() idioma.add("Espaniol")}
+		return if (idioma.any({i=>i!="Espaniol"}))
+			{self.error("Solo se usa Español")}
+				else{"Espaniol"}
 	}
 	override method diasDeActividad() = 1
 	override method sirveParaBroncearse() = false
+	override method esRecomendable(socio) = socio.edad().between(20,30)
 }
